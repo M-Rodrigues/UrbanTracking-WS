@@ -18,3 +18,19 @@ app.get('/', function (req, res) {
 app.get('/modais', function (req, res) {
   res.send(db.getModais());
 });
+
+app.get('/estacoes', function (req, res) {
+  res.send(db.getEstacoes());
+});
+
+app.get('/linhas', function (req, res) {
+  res.send(db.getLinhas());
+});
+
+app.get('/rotas', function (req, res) {
+  res.send(db.getRotas());
+});
+
+app.get('/trajetos', function (req, res) {
+  res.send(db.getTrajetos());
+});
