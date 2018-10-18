@@ -1,7 +1,9 @@
 const express = require('express')
 const path = require('path')
 const PORT = process.env.PORT || 5000
+
 const db = require('./db');
+const cred = require('./credentials');
 
 var app = express();
 app
@@ -9,20 +11,19 @@ app
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 
-
-
 app.get('/', function (req, res) {
   res.send('hello world')
 });
 
-app.get('/modais', function (req, res) {
-  res.send(JSON.stringify(db.getModais()));
+app.get('/modais', async function (req, res) {
+  res.send(JSON.stringify(await db.getModais()));
 });
 
-app.get('/estacoes', function (req, res) {
-  res.send(JSON.stringify(db.getEstacoes()));
+app.get('/estacoes', async function (req, res) {
+  res.send(JSON.stringify(await db.getEstacoes()));
 });
 
-app.get('/linhas', function (req, res) {
-  res.send(JSON.stringify(db.getLinhas()));
+app.get('/linhas', async function (req, res) {
+  res.send(JSON.stringify(await db.getLinhas()));
 });
+

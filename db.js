@@ -1,3 +1,6 @@
+const { Pool } = require('pg');
+const cred = require('./credentials');
+
 module.exports = {
     modais: [
         {id: 1,nome: 'Metrô'},
@@ -286,75 +289,137 @@ module.exports = {
         {idRota: 10, ordem: 10, idEstacao: 42}
     ],
 
-    getModais() {
-        return this.modais; 
+    async getModais() {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query('SELECT * FROM modal');
+            client.release();
+            return result.rows;
+        } catch (err) {
+            return {erro: err};
+        }
     },
 
-    getEstacoes() {
-        let ans = [];
-        this.estacoes.forEach(estacao => {
-            let estacaoObj = {
-                id: estacao.id,
-                nome: estacao.nome,
-                geo: {
-                lat: estacao.lat,
-                lng: estacao.lng
-                },
-                idModal: estacao.idModal
-            };
-            ans.push(estacaoObj);
-        })
-        
-        return ans;
+    async getEstacoes() {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query('SELECT * FROM estacao');
+            client.release();
+
+
+            let estacoes = result.rows;
+            let ans = [];
+            estacoes.forEach(estacao => {
+                let estacaoObj = {
+                    id: estacao.id,
+                    nome: estacao.nome,
+                    geo: {
+                    lat: estacao.lat,
+                    lng: estacao.lng
+                    },
+                    idModal: estacao.idmodal
+                };
+                ans.push(estacaoObj);
+            })
+            
+            return ans;
+        } catch (err) {
+            return {erro: err};
+        }
+
     },
 
-    getEstacao(id) {
+    getEstacao(id, estacoes) {
         let ans;
-        this.estacoes.forEach(estacao => {
+        estacoes.forEach(estacao => {
             if (estacao.id == id) {
                 ans = {
                     id: estacao.id,
                     nome: estacao.nome,
                     geo: {
-                        lat: estacao.lat,
-                        lng: estacao.lng
+                        lat: estacao.geo.lat,
+                        lng: estacao.geo.lng
                     },
                     idModal: estacao.idModal
                 };
+                return ans;
             }
         })
         return ans;
     },
 
-    getLinhas() {
-        let ans = [];
-        this.linhas.forEach(linha => {
-            let rotas = [];
-            this.rotas.forEach(rota => {
-                if (rota.idLinha == linha.id) {
-                    let paradas = [];
-                    this.trajetos.forEach(trajeto => {
-                        if (trajeto.idRota == rota.id) {
-                            paradas.push(this.getEstacao(trajeto.idEstacao));
-                        } 
-                    })
-                    rotas.push({
-                        id: rota.id,
-                        nome: rota.nome,
-                        trajeto: paradas
-                    });
-                }
-            })
-            
-            ans.push({
-                id: linha.id,
-                nome: linha.nome,
-                rotas: rotas,
-                idModal: linha.idModal
-            })
-        });
+    async getLinhas() {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query('SELECT * FROM estacao');
+            client.release();
 
-        return ans;
+
+            let linhasDB = result.rows;
+            let rotasDB = await this.getRotas();
+            let trajetsoDB = await this.getTrajetos();
+            let estacoesDB = await this.getEstacoes();
+
+            console.log(this.getEstacao(2,estacoesDB));
+
+            let ans = [];
+            linhasDB.forEach(linha => {
+                let rotas = [];
+                rotasDB.forEach(rota => {
+                    if (rota.idlinha == linha.id) {
+                        let paradas = [];
+                        trajetsoDB.forEach(trajeto => {
+                            if (trajeto.idrota == rota.id) {
+                                paradas.push(this.getEstacao(trajeto.idestacao, estacoesDB));
+                            } 
+                        })
+                        rotas.push({
+                            id: rota.id,
+                            nome: rota.nome,
+                            trajeto: paradas
+                        });
+                    }
+                })
+                
+                ans.push({
+                    id: linha.id,
+                    nome: linha.nome,
+                    rotas: rotas,
+                    idModal: linha.idmodal
+                })
+            });
+
+            return ans;
+        } catch (err) {
+            return {erro: err};
+        }
+
     },
 
+    async getRotas() {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query('SELECT * FROM rota');
+            client.release();
+            return result.rows;
+        } catch (err) {
+            return {erro: err};
+        }
+    },
+
+    async getTrajetos() {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query('SELECT * FROM trajeto');
+            client.release();
+            return result.rows;
+        } catch (err) {
+            return {erro: err};
+        }
+    }
 };
