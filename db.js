@@ -354,7 +354,7 @@ module.exports = {
         const pool = new Pool(cred.DATABASE_CONN_CONFIG);
         try {
             const client = await pool.connect();
-            const result = await client.query('SELECT * FROM estacao');
+            const result = await client.query('SELECT * FROM linha');
             client.release();
 
 
@@ -362,8 +362,6 @@ module.exports = {
             let rotasDB = await this.getRotas();
             let trajetsoDB = await this.getTrajetos();
             let estacoesDB = await this.getEstacoes();
-
-            console.log(this.getEstacao(2,estacoesDB));
 
             let ans = [];
             linhasDB.forEach(linha => {
