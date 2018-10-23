@@ -1,11 +1,11 @@
 # Node build artifacts
 node_modules
 npm-debug.log
-*.credentials.js
 
 # Local development
 *.env
 *.dev
+credentials.js
 .DS_Store
 
 # Docker
