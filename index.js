@@ -20,18 +20,23 @@ app.get('/', function (req, res) {
   res.send('hello world')
 });
 
+
 app.get('/modais', async function (req, res) {
   res.send(JSON.stringify(await db.getModais()));
 });
+
+
 
 app.get('/estacoes', async function (req, res) {
   res.send(JSON.stringify(await db.getEstacoes()));
 });
 
+
+
 app.get('/linhas', async function (req, res) {
   res.send(JSON.stringify(await db.getLinhas()));
 });
 
-app.post('/linhas/estacao', function(req, res) {
+app.get('/linhas/estacao/:id', function(req, res) {
   res.send(JSON.stringify(req));
 });
