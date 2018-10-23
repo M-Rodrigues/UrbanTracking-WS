@@ -2,12 +2,11 @@
 node_modules
 npm-debug.log
 
-cred
-
 # Local development
 *.env
 *.dev
 .DS_Store
+cred/*.js
 
 # Docker
 Dockerfile
