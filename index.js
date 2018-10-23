@@ -14,6 +14,11 @@ app.use(function(req, res, next) {
   next();
 });
   
+
+app.get('/', async function (req, res) {
+  res.send('WS working!');
+});
+
 // MODAIS
 
 app.get('/modais', async function (req, res) {
