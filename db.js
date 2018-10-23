@@ -1,5 +1,5 @@
 const { Pool } = require('pg');
-const cred = require('./credentials');
+const cred = require('./cred/credentials');
 
 module.exports = {
     modais: [
