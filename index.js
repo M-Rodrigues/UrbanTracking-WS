@@ -5,8 +5,7 @@ const PORT = process.env.PORT || 5000
 const db = require('./db');
 
 var app = express();
-app
-  .use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')))
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 app.use(function(req, res, next) {
@@ -15,11 +14,6 @@ app.use(function(req, res, next) {
   next();
 });
   
-
-app.get('/', function (req, res) {
-  res.send('hello world')
-});
-
 // MODAIS
 
 app.get('/modais', async function (req, res) {
