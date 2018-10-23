@@ -356,40 +356,7 @@ module.exports = {
             const result = await client.query('SELECT * FROM linha');
             client.release();
 
-
-            let linhasDB = result.rows;
-            let rotasDB = await this.getRotas();
-            let trajetsoDB = await this.getTrajetos();
-            let estacoesDB = await this.getEstacoes();
-
-            let ans = [];
-            linhasDB.forEach(linha => {
-                let rotas = [];
-                rotasDB.forEach(rota => {
-                    if (rota.idlinha == linha.id) {
-                        let paradas = [];
-                        trajetsoDB.forEach(trajeto => {
-                            if (trajeto.idrota == rota.id) {
-                                paradas.push(this.getEstacao(trajeto.idestacao, estacoesDB));
-                            } 
-                        })
-                        rotas.push({
-                            id: rota.id,
-                            nome: rota.nome,
-                            trajeto: paradas
-                        });
-                    }
-                })
-                
-                ans.push({
-                    id: linha.id,
-                    nome: linha.nome,
-                    rotas: rotas,
-                    idModal: linha.idmodal
-                })
-            });
-
-            return ans;
+            return await this.linhasList(result.rows);
         } catch (err) {
             return {erro: err};
         }
@@ -418,7 +385,62 @@ module.exports = {
         } catch (err) {
             return {erro: err};
         }
+    },
+
+    async getLinhasPorEstacao(id) {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query(`
+                SELECT * FROM linha l
+                WHERE `+ id +` in (
+                    SELECT idestacao FROM trajeto t
+                    JOIN rota r ON r.id = t.idrota
+                    WHERE r.idlinha = l.id
+                )
+            `);
+            client.release();
+
+            return await this.linhasList(result.rows);
+        } catch (err) {
+            return {erro: err};
+        }
+    },
+
+
+    async linhasList(data) {
+        let linhasDB = data;
+        let rotasDB = await this.getRotas();
+        let trajetsoDB = await this.getTrajetos();
+        let estacoesDB = await this.getEstacoes();
+
+        let ans = [];
+        linhasDB.forEach(linha => {
+            let rotas = [];
+            rotasDB.forEach(rota => {
+                if (rota.idlinha == linha.id) {
+                    let paradas = [];
+                    trajetsoDB.forEach(trajeto => {
+                        if (trajeto.idrota == rota.id) {
+                            paradas.push(this.getEstacao(trajeto.idestacao, estacoesDB));
+                        } 
+                    })
+                    rotas.push({
+                        id: rota.id,
+                        nome: rota.nome,
+                        trajeto: paradas
+                    });
+                }
+            })
+            
+            ans.push({
+                id: linha.id,
+                nome: linha.nome,
+                rotas: rotas,
+                idModal: linha.idmodal
+            })
+        });
+
+        return ans;
     }
-
-
 };

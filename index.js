@@ -20,23 +20,25 @@ app.get('/', function (req, res) {
   res.send('hello world')
 });
 
+// MODAIS
 
 app.get('/modais', async function (req, res) {
   res.send(JSON.stringify(await db.getModais()));
 });
 
-
+// ESTACOES
 
 app.get('/estacoes', async function (req, res) {
   res.send(JSON.stringify(await db.getEstacoes()));
 });
 
-
+// LINHAS
 
 app.get('/linhas', async function (req, res) {
   res.send(JSON.stringify(await db.getLinhas()));
 });
 
-app.get('/linhas/estacao/:id', function(req, res) {
-  res.send(JSON.stringify(req));
+app.get('/linhas/estacao/:id', async function(req, res) {
+  res.send(JSON.stringify(await db.getLinhasPorEstacao(req.params.id)));
 });
+
