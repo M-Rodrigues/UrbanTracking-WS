@@ -28,8 +28,10 @@ app.get('/estacoes', async function (req, res) {
   res.send(JSON.stringify(await db.getEstacoes()));
 });
 
-
 app.get('/linhas', async function (req, res) {
   res.send(JSON.stringify(await db.getLinhas()));
 });
 
+app.post('/linhas/estacao', function(req, res) {
+  res.send(JSON.stringify(req));
+});

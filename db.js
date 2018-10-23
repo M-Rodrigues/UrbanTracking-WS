@@ -308,7 +308,6 @@ module.exports = {
             const result = await client.query('SELECT * FROM estacao');
             client.release();
 
-
             let estacoes = result.rows;
             let ans = [];
             estacoes.forEach(estacao => {
@@ -420,4 +419,6 @@ module.exports = {
             return {erro: err};
         }
     }
+
+
 };
