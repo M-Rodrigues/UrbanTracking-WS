@@ -3,7 +3,7 @@ const path = require('path')
 const PORT = process.env.PORT || 5000
 
 const db = require('./db');
-const cred = require('./credentials');
+const cred = require('./credentials/credentials');
 
 var app = express();
 app
