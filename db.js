@@ -417,7 +417,19 @@ module.exports = {
             const client = await pool.connect();
             const result = await client.query('SELECT * FROM composicao');
             client.release();
-            return result.rows;
+            return await this.composicoesList(result.rows);
+        } catch (err) {
+            return {erro: err};
+        }
+    },
+
+    async getComposicao(id) {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query('SELECT * FROM composicao WHERE id = $1',[id]);
+            client.release();
+            return result.rows[0];
         } catch (err) {
             return {erro: err};
         }
@@ -425,7 +437,6 @@ module.exports = {
 
     async setPosicaoAtualComposicao(composicao) {
         const pool = new Pool(cred.DATABASE_CONN_CONFIG);
-        console.log(composicao);
         try {
             const client = await pool.connect();
             const result = await client.query(`
@@ -433,11 +444,10 @@ module.exports = {
                 SET lat = `+composicao.lat+`,
                     lng = `+composicao.lng+`,
                     ultima_atualizacao = `+composicao.ultima_atualizacao+`
-                WHERE id = 1
+                WHERE id = `+composicao.id+`
             `);
             client.release();
-            console.log(result);
-            return result.rows;
+            return this.getComposicao(composicao.id);
         } catch (err) {
             return {erro: err};
         }
@@ -476,6 +486,33 @@ module.exports = {
                 idModal: linha.idmodal
             })
         });
+
+        return ans;
+    },
+
+    async composicoesList(data) {
+        let composicoesDB = data;
+        let modaisDB = await this.getModais();
+
+        let ans = [];
+        composicoesDB.forEach(composicao => {
+            modaisDB.forEach(modal => {
+                if (modal.id == composicao.idmodal) {
+                    let comp = {
+                        id: composicao.id,
+                        corRastreador: composicao.cod_rastreador,
+                        geo: {
+                            lat: composicao.lat,
+                            lng: composicao.lng
+                        },
+                        ultimaAtualizacao: composicao.ultima_atualizacao,
+                        idModal: composicao.idmodal
+                    }
+
+                    ans.push(comp);
+                }
+            })
+        })
 
         return ans;
     }

@@ -1,8 +1,10 @@
 const express = require('express')
 const path = require('path')
+const bodyParser = require('body-parser')
 const PORT = process.env.PORT || 5000
 
 const db = require('./db');
+const jsonParser = bodyParser.json();
 
 var app = express();
 app.use(express.static(path.join(__dirname, 'public')))
@@ -11,6 +13,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "PUT")
   next();
 });
   
@@ -45,29 +48,13 @@ app.get('/composicoes', async function (req, res) {
   res.send(JSON.stringify(await db.getComposicoes()));
 });
 
-app.put('/composicoes/:id', function(req, res) {
-  console.log(req.params.id);
-  res.send(JSON.stringify(req.body));
-  // res.send(JSON.stringify(await db.setPosicaoAtualComposicao(req.body)))
+app.get('/composicoes/:id', async function (req, res) {
+  res.send(JSON.stringify(await db.getComposicao(req.params.id)));
+});
+
+app.put('/composicoes/:id', jsonParser, async function(req, res) {
+  res.send(JSON.stringify(await db.setPosicaoAtualComposicao(req.body)));
 });
 
 
 
-
-// Simulando Atualizações em tempo real da posição de 1 composição
-// let i = 0;
-// setInterval(async function() {
-//   let posicoes = [
-//     {id:1, cod_restreador: '531829', lat: -22.9371670004413, lng: -43.1785575093104, ultima_atualizacao: 1540426111106, idmodal: 1},
-//     {id:1, cod_restreador: '531829', lat: -22.9393691201638, lng: -43.1790421523969, ultima_atualizacao: 1540426113106, idmodal: 1},
-//     {id:1, cod_restreador: '531829', lat: -22.9412391139108, lng: -43.180929258985, ultima_atualizacao: 1540426115106, idmodal: 1},
-//     {id:1, cod_restreador: '531829', lat: -22.9448643766835, lng: -43.183867140996, ultima_atualizacao: 1540426117106, idmodal: 1},
-//     {id:1, cod_restreador: '531829', lat: -22.947374725384, lng: -43.1841673624987, ultima_atualizacao: 1540426119106, idmodal: 1},
-//     {id:1, cod_restreador: '531829', lat: -22.9511378318007, lng: -43.1841662500492, ultima_atualizacao: 1540426121107, idmodal: 1}
-//   ]
-
-//   let ans = await db.setPosicaoAtualComposicao(posicoes[i]);
-//   console.log(ans);
-
-//   i = (i+1)%6;
-// }, 2000);
