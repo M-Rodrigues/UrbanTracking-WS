@@ -289,6 +289,7 @@ module.exports = {
         {idRota: 10, ordem: 10, idEstacao: 42}
     ],
 
+    // MODAL
     async getModais() {
         const pool = new Pool(cred.DATABASE_CONN_CONFIG);
         try {
@@ -301,6 +302,7 @@ module.exports = {
         }
     },
 
+    // ESTACAO
     async getEstacoes() {
         const pool = new Pool(cred.DATABASE_CONN_CONFIG);
         try {
@@ -349,6 +351,7 @@ module.exports = {
         return ans;
     },
 
+    // LINHA
     async getLinhas() {
         const pool = new Pool(cred.DATABASE_CONN_CONFIG);
         try {
@@ -407,7 +410,38 @@ module.exports = {
         }
     },
 
+    // COMPOSICAO
+    async getComposicoes() {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query('SELECT * FROM composicao');
+            client.release();
+            return result.rows;
+        } catch (err) {
+            return {erro: err};
+        }
+    },
 
+    async setPosicaoAtualComposicao(composicao) {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query(`
+                UPDATE composicao
+                SET lat = `+composicao.lat+`,
+                    lng = `+composicao.lng+`,
+                    ultima_atualizacao = `+composicao.ultima_atualizacao+`
+                WHERE id = 1
+            `);
+            client.release();
+            return result.rows;
+        } catch (err) {
+            return {erro: err};
+        }
+    },
+
+    // UTILITÁRIOS
     async linhasList(data) {
         let linhasDB = data;
         let rotasDB = await this.getRotas();

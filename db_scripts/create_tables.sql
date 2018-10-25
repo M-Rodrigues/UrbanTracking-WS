@@ -55,7 +55,7 @@ CREATE TABLE composicao
     cod_rastreador INTEGER NOT NULL,
     lat FLOAT NOT NULL,
     lng FLOAT NOT NULL,
-    ultima_atualizacao TIMESTAMP NOT NULL,
+    ultima_atualizacao BIGINT NOT NULL,
     idmodal BIGINT NOT NULL,
     CONSTRAINT pk_composicao PRIMARY KEY (id),
     CONSTRAINT fk_modal FOREIGN KEY (idmodal)
@@ -67,8 +67,8 @@ CREATE TABLE corrida
     id SERIAL,
     idcomposicao BIGINT NOT NULL,
     idrota BIGINT NOT NULL,
-    dataHora_inicio TIMESTAMP NOT NULL,
-    dataHora_termino TIMESTAMP NULL,
+    dataHora_inicio BIGINT NOT NULL,
+    dataHora_termino BIGINT NULL,
     CONSTRAINT pk_corrida PRIMARY KEY (id),
     CONSTRAINT fk_composicao FOREIGN KEY (idcomposicao)
         REFERENCES composicao (id),
@@ -81,7 +81,7 @@ CREATE TABLE paradas
 (
     idcorrida BIGINT NOT NULL,
     idestacao BIGINT NOT NULL,
-    dataHora_parada TIMESTAMP NOT NULL,
+    dataHora_parada BIGINT NOT NULL,
     CONSTRAINT pk_parada PRIMARY KEY (idcorrida, idestacao, dataHora_parada),
     CONSTRAINT fk_corrida FOREIGN KEY (idcorrida)
         REFERENCES corrida (id),
