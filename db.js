@@ -425,6 +425,7 @@ module.exports = {
 
     async setPosicaoAtualComposicao(composicao) {
         const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        console.log(composicao);
         try {
             const client = await pool.connect();
             const result = await client.query(`
@@ -435,6 +436,7 @@ module.exports = {
                 WHERE id = 1
             `);
             client.release();
+            console.log(result);
             return result.rows;
         } catch (err) {
             return {erro: err};

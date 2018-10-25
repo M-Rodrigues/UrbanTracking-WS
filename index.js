@@ -45,6 +45,14 @@ app.get('/composicoes', async function (req, res) {
   res.send(JSON.stringify(await db.getComposicoes()));
 });
 
+app.put('/composicoes/:id', function(req, res) {
+  console.log(req.params.id);
+  res.send(JSON.stringify(req.body));
+  // res.send(JSON.stringify(await db.setPosicaoAtualComposicao(req.body)))
+});
+
+
+
 
 // Simulando Atualizações em tempo real da posição de 1 composição
 // let i = 0;
