@@ -31,9 +31,10 @@ app.get('/modais/:id', async function (req, res) { // Read Modal
   res.send(JSON.stringify(await db.getModal(req.params.id)));
 });
 
-app.put('/modais', async function(req, res) { // Update Modal
+app.put('/modais', jsonParser, async function(req, res) { // Update Modal
   res.send(JSON.stringify(await db.alterarModal(req.body)));
 });
+
 
 // ESTACOES
 
