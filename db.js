@@ -310,7 +310,7 @@ module.exports = {
                 SELECT * from modal WHERE id = $1
             `,[id]);
             client.release();
-            return result.rows;
+            return result.rows[0];
         } catch (err) {
             return {erro: err};
         }

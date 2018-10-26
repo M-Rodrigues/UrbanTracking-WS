@@ -23,15 +23,15 @@ app.get('/', function (req, res) {
 
 // MODAIS
 
-app.get('/modais', async function (req, res) {
+app.get('/modais', async function (req, res) { // Todos Modais
   res.send(JSON.stringify(await db.getModais()));
 });
 
-app.get('/modais/:id', async function (req, res) {
+app.get('/modais/:id', async function (req, res) { // Read Modal
   res.send(JSON.stringify(await db.getModal(req.params.id)));
 });
 
-app.put('/modais', async function(req, res) {
+app.put('/modais', async function(req, res) { // Update Modal
   res.send(JSON.stringify(await db.alterarModal(req.body)));
 });
 
