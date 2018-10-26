@@ -322,9 +322,9 @@ module.exports = {
             const client = await pool.connect();
             const result = await client.query(`
                 UPDATE modal
-                    set nome = `+modal.nome+`
-                WHERE id = `+modal.id+`
-            `);
+                    set nome = $1
+                WHERE id = $2
+            `,[modal.nome, modal.id]);
             client.release();
             return result.rows;
         } catch (err) {
