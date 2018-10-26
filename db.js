@@ -302,6 +302,36 @@ module.exports = {
         }
     },
 
+    async getModal(id) {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query(`
+                SELECT * from modais WHERE id = ($1)
+            `,[id]);
+            client.release();
+            return result.rows;
+        } catch (err) {
+            return {erro: err};
+        }
+    },
+
+    async alterarModal(modal) {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query(`
+                UPDATE modais
+                    set nome = `+modal.nome+`
+                WHERE id = `+modal.id+`
+            `);
+            client.release();
+            return result.rows;
+        } catch (err) {
+            return {erro: err};
+        }
+    },
+
     // ESTACAO
     async getEstacoes() {
         const pool = new Pool(cred.DATABASE_CONN_CONFIG);

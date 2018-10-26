@@ -27,6 +27,14 @@ app.get('/modais', async function (req, res) {
   res.send(JSON.stringify(await db.getModais()));
 });
 
+app.get('/modais/:id', async function (req, res) {
+  res.send(JSON.stringify(await db.getModal(req.params.id)));
+});
+
+app.put('/modais', async function(req, res) {
+  res.send(JSON.stringify(await db.alterarModal(req.body)));
+});
+
 // ESTACOES
 
 app.get('/estacoes', async function (req, res) {
@@ -55,6 +63,8 @@ app.get('/composicoes/:id', async function (req, res) {
 app.put('/composicoes/:id', jsonParser, async function(req, res) {
   res.send(JSON.stringify(await db.setPosicaoAtualComposicao(req.body)));
 });
+
+
 
 
 
