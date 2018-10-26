@@ -307,7 +307,7 @@ module.exports = {
         try {
             const client = await pool.connect();
             const result = await client.query(`
-                SELECT * from modais WHERE id = $1
+                SELECT * from modal WHERE id = $1
             `,[id]);
             client.release();
             return result.rows;
@@ -321,7 +321,7 @@ module.exports = {
         try {
             const client = await pool.connect();
             const result = await client.query(`
-                UPDATE modais
+                UPDATE modal
                     set nome = `+modal.nome+`
                 WHERE id = `+modal.id+`
             `);
