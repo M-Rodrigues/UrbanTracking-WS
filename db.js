@@ -307,7 +307,7 @@ module.exports = {
         try {
             const client = await pool.connect();
             const result = await client.query(`
-                SELECT * from modais WHERE id = ($1)
+                SELECT * from modais WHERE id = $1
             `,[id]);
             client.release();
             return result.rows;
