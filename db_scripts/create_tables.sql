@@ -2,7 +2,8 @@ CREATE TABLE modal
 (
 	id SERIAL,
 	nome VARCHAR(255) NOT NULL,
-	CONSTRAINT pk_modal PRIMARY KEY (id)
+	CONSTRAINT pk_modal PRIMARY KEY (id),
+    CONSTRAINT ck_modal UNIQUE(nome)
 )
 
 CREATE TABLE estacao
@@ -14,7 +15,8 @@ CREATE TABLE estacao
     idmodal BIGINT,
     CONSTRAINT pk_estacao PRIMARY KEY (id),
     CONSTRAINT fk_modal FOREIGN KEY (idmodal)
-        REFERENCES modal (id)
+        REFERENCES modal (id),
+    CONSTRAINT ck_estacao UNIQUE(nome, idmodal)
 )
 
 CREATE TABLE linha

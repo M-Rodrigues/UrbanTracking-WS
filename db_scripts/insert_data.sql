@@ -5,7 +5,7 @@ INSERT INTO modal (nome) VALUES
 ('Trem'),
 ('Ônibus')
 
-INSERT INTO estacao ([nome], [lat], [lng], [idmodal]) VALUES
+INSERT INTO estacao (nome, lat, lng, idmodal) VALUES
 ('Jardim Oceânico',-23.006807,-43.311032,1),
 ('São Conrado',-22.993602,-43.253796,1),
 ('Antero de Quental',-22.9846,-43.223411,1),
