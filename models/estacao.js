@@ -6,7 +6,18 @@ module.exports = {
         const pool = new Pool(cred.DATABASE_CONN_CONFIG);
         try {
             const client = await pool.connect();
-            const result = await client.query('SELECT * FROM estacao');
+            const result = await client.query(`
+            select row_to_json(est) from (
+                select 
+                    e.id, e.nome, 
+                    (select row_to_json(g) from (
+                        select est.lat, est.lng from estacao est where est.id = e.id
+                    ) as g) as geo,
+                    e.idmodal
+                from estacao e
+                order by e.id asc
+            ) as est
+            `);
             client.release();
 
             return await this.buildEstacoesList(result.rows);
@@ -20,11 +31,45 @@ module.exports = {
         try {
             const client = await pool.connect();
             const result = await client.query(`
-                SELECT * from estacao WHERE id = $1
+            select row_to_json(est) from (
+                select 
+                    e.id, e.nome, 
+                    (select row_to_json(g) from (
+                        select est.lat, est.lng from estacao est where est.id = e.id
+                    ) as g) as geo,
+                    e.idmodal
+                from estacao e
+                where e.id = $1
+            ) as est
             `,[id]);
             client.release();
 
-            return await this.buildEstacao(result.rows[0]);
+            return this.buildEstacao(result.rows[0]);
+        } catch (err) {
+            return {erro: err};
+        }
+    },
+
+    async getEstacoesProximas(lat, lng, r) {
+        const pool = new Pool(cred.DATABASE_CONN_CONFIG);
+        try {
+            const client = await pool.connect();
+            const result = await client.query(`
+            select row_to_json(est) from (
+                select 
+                    e.id, e.nome, 
+                    (select row_to_json(g) from (
+                        select est.lat, est.lng from estacao est where est.id = e.id
+                    ) as g) as geo,
+                    e.idmodal
+                from estacao e
+                where dist_reta(e.lat, e.lng, $1, $2) <= power($3,2)
+                order by dist_reta(e.lat, e.lng, $1, $2) asc
+            ) as est
+            `,[lat, lng, r]);
+            client.release();
+
+            return this.buildEstacoesList(result.rows);
         } catch (err) {
             return {erro: err};
         }
@@ -35,7 +80,16 @@ module.exports = {
         try {
             const client = await pool.connect();
             const result = await client.query(`
-                SELECT * from estacao WHERE nome = $1 and idmodal = $2
+            select row_to_json(est) from (
+                select 
+                    e.id, e.nome, 
+                    (select row_to_json(g) from (
+                        select est.lat, est.lng from estacao est where est.id = e.id
+                    ) as g) as geo,
+                    e.idmodal
+                from estacao e
+                where e.nome = $1 and e.idmodal = $2
+            ) as est
             `,[name, idmodal]);
             client.release();
 
@@ -84,20 +138,14 @@ module.exports = {
     async buildEstacoesList(estacoes) {
         let ans = [];
         
+        //estacoes.forEach(estacao => ans.push(this.buildEstacao(estacao)));
         estacoes.forEach(estacao => ans.push(this.buildEstacao(estacao)));
 
         return ans;
     },
 
+
     buildEstacao(estacao) {
-        return {
-            id: estacao.id,
-            nome: estacao.nome,
-            geo: {
-                lat: estacao.lat,
-                lng: estacao.lng
-            },
-            idModal: estacao.idmodal
-        };
+        return estacao.row_to_json;
     }
 }

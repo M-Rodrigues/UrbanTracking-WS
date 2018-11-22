@@ -7,10 +7,14 @@ module.exports = {
         try {
             const client = await pool.connect();
             const result = await client.query(`
-                SELECT * FROM modal
+            select row_to_json(mod) from (
+                select *
+                from modal m
+                order by m.id asc
+            ) as mod
             `);
             client.release();
-            return result.rows;
+            return this.buildModaisList(result.rows);
         } catch (err) {
             return {erro: err};
         }
@@ -21,10 +25,14 @@ module.exports = {
         try {
             const client = await pool.connect();
             const result = await client.query(`
-                SELECT * from modal WHERE id = $1
+            select row_to_json(mod) from (
+                select *
+                from modal m
+                where m.id = $1
+            ) as mod
             `,[id]);
             client.release();
-            return result.rows[0];
+            return this.buildModal(result.rows[0]);
         } catch (err) {
             return {erro: err};
         }
@@ -35,10 +43,14 @@ module.exports = {
         try {
             const client = await pool.connect();
             const result = await client.query(`
-                SELECT * from modal WHERE nome = $1
+            select row_to_json(mod) from (
+                select *
+                from modal m
+                where m.nome = $1
+            ) as mod
             `,[name]);
             client.release();
-            return result.rows[0];
+            return this.buildModal(result.rows[0]);
         } catch (err) {
             return {erro: err};
         }
@@ -73,5 +85,15 @@ module.exports = {
         } catch (err) {
             return {erro: err};
         }     
-    }
+    },
+
+    buildModaisList(modais) {
+        let ans = [];
+
+        modais.forEach(modal => ans.push(this.buildModal(modal)));
+
+        return ans;
+    },
+
+    buildModal(modal) { return modal.row_to_json; }
 }
