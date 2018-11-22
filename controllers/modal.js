@@ -28,6 +28,7 @@ module.exports = {
         this.app.post('/modais', jsonParser, async (req, res) => {
             res.send(JSON.stringify(await modalService.createModal(req.body.nome)));
         });
+        
     }
 
 };

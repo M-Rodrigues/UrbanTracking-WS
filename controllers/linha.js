@@ -16,6 +16,10 @@ module.exports = {
             res.send(JSON.stringify(await linhaService.getLinhas()));
         });
         
+        this.app.get('/linhas/:id', async (req, res) => {
+            res.send(JSON.stringify(await linhaService.getLinha(req.params.id)));
+        });
+
         this.app.get('/linhas/estacao/:id', async (req, res) => {
             res.send(JSON.stringify(await linhaService.getLinhasPorEstacao(req.params.id)));
         });

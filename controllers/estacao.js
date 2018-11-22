@@ -20,6 +20,10 @@ module.exports = {
             res.send(JSON.stringify(await estacaoService.getEstacao(req.params.id)));
         });
 
+        this.app.get('/estacoes/nearby/:lat/:lng/:raio', async (req, res) => {
+            res.send(JSON.stringify(await estacaoService.getEstacoesProximas(req.params.lat, req.params.lng, req.params.raio)));
+        });
+        
         this.app.put('/estacoes', jsonParser, async (req, res) => { // Update Estacao
             res.send(JSON.stringify(await estacaoService.updateEstacao(req.body)));
         });
