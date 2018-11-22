@@ -1,15 +1,11 @@
 const express = require('express')
 const path = require('path')
-const bodyParser = require('body-parser')
-
-const db = require('./db.js');
 
 const modalCtrl = require('./controllers/modal.js');
 const estacaoCtrl = require('./controllers/estacao.js');
 const linhaCtrl = require('./controllers/linha.js');
+const composicaoCtrl = require('./controllers/composicao.js');
 
-
-const jsonParser = bodyParser.json();
 const PORT = process.env.PORT || 5000
 
 var app = express();
@@ -33,20 +29,19 @@ app.get('/', function (req, res) {
 modalCtrl.setApp(app);
 estacaoCtrl.setApp(app);
 linhaCtrl.setApp(app);
+composicaoCtrl.setApp(app);
+
 
 // COMPOSICOES
-app.get('/composicoes', async function (req, res) {
-  res.send(JSON.stringify(await db.getComposicoes()));
-});
+// app.get('/composicoes', async function (req, res) {
+//   res.send(JSON.stringify(await db.getComposicoes()));
+// });
 
-app.get('/composicoes/:id', async function (req, res) {
-  res.send(JSON.stringify(await db.getComposicao(req.params.id)));
-});
+// app.get('/composicoes/:id', async function (req, res) {
+//   res.send(JSON.stringify(await db.getComposicao(req.params.id)));
+// });
 
-app.put('/composicoes/:id', jsonParser, async function(req, res) {
-  res.send(JSON.stringify(await db.setPosicaoAtualComposicao(req.body)));
-});
-
-
-
+// app.put('/composicoes/:id', jsonParser, async function(req, res) {
+//   res.send(JSON.stringify(await db.setPosicaoAtualComposicao(req.body)));
+// });
 

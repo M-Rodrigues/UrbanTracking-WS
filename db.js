@@ -68,6 +68,7 @@ module.exports = {
             const client = await pool.connect();
             const result = await client.query('SELECT * FROM composicao');
             client.release();
+            console.log(result.rows);
             return await this.composicoesList(result.rows);
         } catch (err) {
             return {erro: err};
