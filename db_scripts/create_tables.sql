@@ -61,7 +61,8 @@ CREATE TABLE composicao
     idmodal BIGINT NOT NULL,
     CONSTRAINT pk_composicao PRIMARY KEY (id),
     CONSTRAINT fk_modal FOREIGN KEY (idmodal)
-        REFERENCES modal (id)
+        REFERENCES modal (id),
+    CONSTRAINT ck_composicao UNIQUE (cod_rastreador)
 )
 
 CREATE TABLE corrida
